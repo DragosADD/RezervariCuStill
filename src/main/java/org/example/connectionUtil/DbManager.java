@@ -18,32 +18,54 @@ public class DbManager {
     }
 
 
-    //nu este recomandata
     public void closeConnection(Connection connection, Statement statement, ResultSet res) {
-        this. closeConnection(connection, statement);
-        if(res !=null){
-            try{
+        this.closeConnection(connection, statement);
+        this.closeConnection(res);
+    }
+
+    public void closeConnection(Connection connection, Statement[] statements, ResultSet[] resultSets) {
+        this.closeConnection(connection);
+        for (Statement stmt : statements) {
+            this.closeConnection(stmt);
+        }
+        for (ResultSet resSet : resultSets) {
+            this.closeConnection(resSet);
+        }
+    }
+
+    public void closeConnection(Connection connection, Statement statement) {
+        this.closeConnection(connection);
+        this.closeConnection(statement);
+
+    }
+
+    public void closeConnection(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void closeConnection(ResultSet res) {
+        if (res != null) {
+            try {
                 res.close();
-            }catch (SQLException e){
-                System.out.println("print exception");
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
         }
     }
 
-    public  void closeConnection(Connection connection, Statement statement){
-        if (connection != null) {
+    public void closeConnection(Statement statement) {
+        if (statement != null) {
             try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println("print exception");
-            }
-        }
-        if(statement != null){
-            try{
                 statement.close();
-            }catch (SQLException e){
-                System.out.println("print exception");
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -3,9 +3,10 @@ package org.example;
 import org.example.connectionUtil.DbManager;
 import org.example.domain.local.Local;
 import org.example.domain.local.LocalLoader;
-import org.example.exceptions.MultipleOrNoLocalsException;
+import org.example.exceptions.AlreadyExistsException;
+import org.example.exceptions.DBComunicationException;
+import org.example.exceptions.MultipleOrNoEntityException;
 
-import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
@@ -39,27 +40,35 @@ public class Main {
                 if(command.equals("end")){
                     break;
                 }
-                Local fetchedLocal = null;
                 try{
-                    fetchedLocal  = localDao.findByName(command);
-                    System.out.println(fetchedLocal);
-                }catch (SQLException e){
-                    throw new SQLException(e);
-                }catch (MultipleOrNoLocalsException e){
-                    System.out.println(e.getMessage());
-                    continue;
+                    for(Local local : localDao.findByName(command)){
+                        System.out.println(local);
+                    }
+                }catch (DBComunicationException e){
+                    System.out.println("failed getting the data" + e.getMessage());
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
              }
             System.out.println("---------Get specific local based on name Ending");
             System.out.println();
             System.out.println("-----Creaza un local-------");
-            Local local = new Local( "AlexRestaurant", 23812351, "Braila", Time.valueOf(LocalTime.parse("08:30")), Time.valueOf(LocalTime.parse("22:30")), "Restaurant");
-            localDao.saveObject(local);
+            Local local = new Local( "MistretulNastrusnic", 21243351, "Galati", Time.valueOf(LocalTime.parse("08:30")), Time.valueOf(LocalTime.parse("22:30")), "Restaurant");
+
+            try {
+                System.out.println( localDao.saveObject(local));
+
+            } catch (MultipleOrNoEntityException e) {
+                System.out.println(e.getMessage());
+            }
+            ;
             System.out.println("---------Sfarsit creare Local---");
 
-        } catch (SQLException e) {
+
+        } catch (DBComunicationException e) {
             System.out.println("failed getting the data" + e.getMessage());
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
     }

@@ -1,19 +1,24 @@
 package org.example.domain;
 
-import java.sql.SQLException;
+import org.example.domain.local.Local;
+import org.example.exceptions.AlreadyExistsException;
+import org.example.exceptions.DBComunicationException;
+import org.example.exceptions.MultipleOrNoEntityException;
+import org.example.exceptions.NoTheSameException;
+
 import java.util.List;
 
 public interface GenericDao<T> {
     //returneaza o lista de obiecte din bd
-    List<T> getAll() throws SQLException;
+    List<T> getAll() throws DBComunicationException;
     //returneaza obiectul dupa id
-    T findByName(String name) throws SQLException;
+    List<T> findByName(String name) throws DBComunicationException, MultipleOrNoEntityException;
     //salveaza obiectul
-    void saveObject(T t) throws SQLException;
+    T saveObject(T t) throws DBComunicationException, AlreadyExistsException, MultipleOrNoEntityException;
     //updateaza obiectul
-    void updateSingleObject(T t);
+    T updateSingleObject(T t, T n) throws MultipleOrNoEntityException, DBComunicationException;
     // sterge obiectul
-    void deleteSingleObjectFromDb(T t);
+    T deleteSingleObjectFromDb(T t) throws DBComunicationException, NoTheSameException;
     //stergeToateObiectele
 
 }
